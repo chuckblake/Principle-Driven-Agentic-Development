@@ -261,7 +261,7 @@ More in [zombie-saas-idea.md](zombie-saas-idea.md) (coming soon).
 
 ## Status
 
-This is a living document. PDAD is being built and tested in production at [GetMusic.fm](https://getmusic.fm), [IndieCrates](https://indiecrates.com), and [SonicSift](https://sonicsift.com).
+This is a living document. PDAD is being built and tested in production at [GetMusic.fm](https://getmusic.fm), [IndieCrates](https://indiecrates.com), [SonicSift](https://sonicsift.com), and [Glance](https://glnc.io).
 
 If you're using PDAD, open an issue and tell us what's working and what's not.
 
