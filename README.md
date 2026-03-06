@@ -39,7 +39,7 @@ Five documents. That's PDAD.
 These aren't a product spec or a PRD. They're the persistent context layer that lives above any individual task — the thing you write once and refine forever, giving every agent run a foundation to build on.
 
 ```
-Goals → Principles → Guardrails → Anti-Goals → Outcome Spec
+Goals → North Star → Principles → Guardrails → Anti-Goals → Outcome Spec
 ```
 
 ### Goals
@@ -62,6 +62,25 @@ Three components, all required:
 
 > *Bad:* "Grow revenue"
 > *Good:* "20% of trial users convert to paid within 14 days of signup"
+
+---
+
+### North Star
+
+**The single metric the product is optimizing for right now.**
+
+Goals define success broadly. The North Star narrows it to one number. If you could only move one metric this quarter, what is it? That's your North Star.
+
+It's not revenue. Revenue is the output. The North Star is the leading indicator — the thing that, when it moves, everything else follows.
+
+> *Bad:* "Grow the platform"
+> *Good:* "Crates created by non-admin users per week"
+
+Notice what that example excludes: admin activity, operator setup, seeded content. Only real user behavior counts. If you're the one creating all the crates, the metric is lying to you.
+
+One North Star per product at a time. When strategy shifts, update it. But don't run two — that's not focus, that's hedging.
+
+The North Star drives Research. Every cycle, you audit the funnel that produces it (see Funnel Audit below). You can't improve what you're not measuring.
 
 ---
 
@@ -167,6 +186,46 @@ See [AUTONOMY-TIERS.md](AUTONOMY-TIERS.md) for the full decision framework.
 
 ---
 
+## Work Item Design
+
+**Work items in PDAD are not tickets. Three fields make them different.**
+
+A Jira ticket says: *"Build X."* A PDAD work item says: *"We believe building X will cause Y, because Z."* That difference matters more than any methodology.
+
+**Hypothesis** — "We believe X will improve Y because Z." Every work item is a bet. If you can't write the hypothesis, you don't understand why you're building it. No hypothesis, no work item. This isn't bureaucracy — it's a forcing function for clarity.
+
+> *Bad:* "Add email notifications"
+> *Good:* "We believe adding email notifications when a crate gets a new follower will increase weekly return visits by 15%, because users currently have no signal that their crates are gaining traction."
+
+**Acceptance Criteria** — Defined before building starts, not after. This is where most teams cheat: they write the criteria after delivery to confirm what was already built. That's theater. Real acceptance criteria are written as pass/fail conditions before a line of code is written. If you can't say in advance what "done" looks like, you're not ready to build.
+
+**ICE Score** — Impact × Confidence × Ease (each 1–3, max 27). Forces prioritization before the queue forms. Highest-ICE items ship first. The score isn't precise — it's directional. The point is to have a conversation about the tradeoffs before you're committed.
+
+This connects to the Latent Space "code review is dead" insight: human judgment moves upstream. When agents do the building, you're not reviewing the diff — you're reviewing the spec. The hypothesis, the acceptance criteria, the ICE score. Get those right and the execution largely takes care of itself.
+
+---
+
+## Active Tests
+
+**Shipping isn't the end of the loop — it's the beginning of measurement.**
+
+Every work item with a hypothesis auto-creates an Active Test on deploy. Active Tests are persistent monitoring items, not tasks. They don't close when the feature ships. They close when the hypothesis is confirmed, refuted, or declared inconclusive.
+
+An Active Test tracks:
+- **What's being tested** — the feature or change
+- **Hypothesis** — copied from the work item
+- **Success metric** — the specific number that determines the outcome
+- **Current reading** — latest data
+- **Status** — running / concluded / inconclusive
+
+The research process checks all running Active Tests on every cycle. A test that's been running for more than 4 weeks without a conclusion is itself a signal — either the metric isn't being captured, or the effect is too small to measure, or nobody's actually looking. All three are problems.
+
+Concluded tests feed back into your PDAD documents. A confirmed hypothesis might strengthen a Principle. A refuted one might become an Anti-Goal. An inconclusive one probably means you're missing instrumentation.
+
+You can't learn from what you didn't measure.
+
+---
+
 ## The Oversight Layer
 
 This is the part nobody in the "vibe coding" discourse is talking about.
@@ -209,6 +268,8 @@ When starting an agent session, combine them:
 - User Outcome: [JTBD statement]  
 - Business Outcome: [metric + timeframe]
 
+**North Star:** [single metric the product is optimizing for right now]
+
 **Principles:** [5-8 active statements]
 
 **Guardrails:** [hard limits as "Never X"]
@@ -230,18 +291,30 @@ When starting an agent session, combine them:
 PDAD isn't a one-time setup. It's a living system that improves with every agent run.
 
 ```
-Research → Propose → Approve → Build → Update PDAD
+Research (funnel audit + active test check) →
+Propose (with hypothesis + acceptance criteria + ICE score) →
+Approve →
+Build →
+Deploy →
+Monitor (auto-test created from hypothesis) →
+Learn (research checks tests, closes loop)
 ```
 
-1. **Research** — Agent explores the codebase, surfaces options, identifies risks
-2. **Propose** — Agent writes an approach; human reviews before execution starts
-3. **Approve** — Human signs off (or adjusts) the plan
-4. **Build** — Agent executes with full PDAD context loaded
-5. **Update PDAD** — After the run, update Goals/Principles/Guardrails/Anti-goals with what you learned
+1. **Research** — Agent explores the codebase, surfaces options, identifies risks. When a North Star exists, this step includes a **Funnel Audit**: map every stage that produces the North Star metric (typically Acquisition → Conversion → Activation → Retention), then ask two questions for each stage: *Do we have visibility?* and *Is there a work item targeting it?* Missing instrumentation is a blocker, not a nice-to-have. You can't optimize what you can't measure. Research also checks all running Active Tests — any test due for a conclusion gets surfaced.
 
-The update step is what most people skip. Don't skip it. Every drift, every surprise, every "I didn't want it to do that" is a missing Guardrail or Anti-goal. Capture it.
+2. **Propose** — Agent writes a work item: deliverable, hypothesis, acceptance criteria, ICE score. Human reviews before execution starts. This is where judgment happens — not at the diff.
 
-Over time, your PDAD documents become a high-fidelity model of how you build. The agents get better not because they improved — because you got better at giving them context.
+3. **Approve** — Human signs off (or adjusts) the plan. The hypothesis must make sense. The acceptance criteria must be unambiguous. The ICE score must reflect actual tradeoffs.
+
+4. **Build** — Agent executes with full PDAD context loaded.
+
+5. **Deploy** — Ship it.
+
+6. **Monitor** — An Active Test is automatically created from the work item's hypothesis. It starts running from deploy. The success metric is tracked.
+
+7. **Learn** — Next Research cycle checks all running Active Tests. Concluded tests update PDAD documents. Every drift, every surprise, every "I didn't want it to do that" is a missing Guardrail or Anti-goal. Capture it.
+
+The Learn step is what most people skip. Don't skip it. Over time, your PDAD documents become a high-fidelity model of how you build. The agents get better not because they improved — because you got better at giving them context.
 
 ---
 
