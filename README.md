@@ -343,3 +343,21 @@ If you're using PDAD, open an issue and tell us what's working and what's not.
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+---
+
+## PDAD v3 — Work Queue & Deploy System
+
+The context stack above is the *product* layer. PDAD v3 adds an opinionated *execution* layer: version-controlled work queues, category-based auto-approvals, and explicit deploy gates.
+
+### How it works
+
+Each project gets a `pdad/` directory:
+- `README.md` — what this product is, north star metric
+- `work-queue.md` — approved items ready to build or deploy
+- `ideas.md` — raw backlog, not yet reviewed
+- `decisions.md` — why we built or skipped things
+- `principles.md` — product rules and hard constraints
+
+See [`SPEC.md`](SPEC.md) for the full v3 specification (categories, status flow, quality gates, deploy flow).  
+See [`templates/`](templates/) for blank starting files.
